@@ -29,6 +29,21 @@ public class User {
         this.email = userDto.getEmail();
         this.name = userDto.getName();
         this.userId = UUID.randomUUID().toString();
-        this.encryptedPassword = "encryptedPassword";
+    }
+
+    public void createUserPassword(String encryptedPassword) {
+        this.encryptedPassword = encryptedPassword;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }
