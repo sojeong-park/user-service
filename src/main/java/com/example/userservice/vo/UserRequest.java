@@ -15,7 +15,7 @@ public class UserRequest {
 
     @NotNull(message = "Id is not null")
     @Size(min = 2, message = "Id not be less than 2 characters")
-    private String id;
+    private String name;
 
     @NotNull(message = "Password is not null")
     @Size(min = 8, message = "Password not be less than 8 characters")

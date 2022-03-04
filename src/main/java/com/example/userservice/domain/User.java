@@ -1,11 +1,12 @@
 package com.example.userservice.domain;
 
+import com.example.userservice.dto.UserDto;
 import lombok.Data;
 
 import javax.annotation.processing.Generated;
 import javax.persistence.*;
+import java.util.UUID;
 
-@Data
 @Entity
 public class User {
     @Id
@@ -23,4 +24,11 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String encryptedPassword;
+
+    public User(UserDto userDto) {
+        this.email = userDto.getEmail();
+        this.name = userDto.getName();
+        this.userId = UUID.randomUUID().toString();
+        this.encryptedPassword = "encryptedPassword";
+    }
 }
