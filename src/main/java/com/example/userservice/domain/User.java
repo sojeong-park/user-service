@@ -25,6 +25,8 @@ public class User {
     @Column(nullable = false, unique = true)
     private String encryptedPassword;
 
+    public User() {}
+
     public User(UserDto userDto) {
         this.email = userDto.getEmail();
         this.name = userDto.getName();
