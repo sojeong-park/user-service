@@ -1,6 +1,6 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.domain.User;
+import com.example.userservice.domain.UserEntity;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.service.UserService;
 import com.example.userservice.vo.UserRequest;
@@ -21,6 +21,7 @@ import java.util.List;
 public class UserController {
     private Environment env;
     private UserService userService;
+
     @Autowired
     public UserController(Environment env, UserService userService) {
         this.env = env;
@@ -59,7 +60,7 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> getUserList() {
-        Iterable<User> users = userService.getUserByAll();
+        Iterable<UserEntity> users = userService.getUserByAll();
 
         List<UserResponse> userResponses = new ArrayList<>();
         users.forEach(v -> {

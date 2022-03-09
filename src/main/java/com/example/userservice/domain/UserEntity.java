@@ -2,13 +2,14 @@ package com.example.userservice.domain;
 
 import com.example.userservice.dto.UserDto;
 import lombok.Data;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.processing.Generated;
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,9 +26,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String encryptedPassword;
 
-    public User() {}
+    public UserEntity() {}
 
-    public User(UserDto userDto) {
+    public UserEntity(UserDto userDto) {
         this.email = userDto.getEmail();
         this.name = userDto.getName();
         this.userId = UUID.randomUUID().toString();
@@ -48,4 +49,6 @@ public class User {
     public String getUserId() {
         return userId;
     }
+
+    public String getEncryptedPassword() {return encryptedPassword;}
 }

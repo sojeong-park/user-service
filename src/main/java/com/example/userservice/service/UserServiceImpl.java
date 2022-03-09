@@ -1,12 +1,15 @@
 package com.example.userservice.service;
 
-import com.example.userservice.domain.User;
+import com.example.userservice.domain.UserEntity;
 import com.example.userservice.domain.UserRepository;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.vo.OrderResponse;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,19 +32,19 @@ public class UserServiceImpl implements UserService{
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        User user = new User(userDto);
-        user.createUserPassword(passwordEncoder.encode(userDto.getPassword()));
+        UserEntity userEntity = new UserEntity(userDto);
+        userEntity.createUserPassword(passwordEncoder.encode(userDto.getPassword()));
 
-        userRepository.save(user);
+        userRepository.save(userEntity);
 
         // User 클래스에 getter가 있어야 UserDto에 매핑된다.
-        return mapper.map(user, UserDto.class);
+        return mapper.map(userEntity, UserDto.class);
     }
 
     @Override
     public UserDto getUserByUserId(String userId) {
-        User user = userRepository.findByUserId(userId);
-        UserDto userDto = new ModelMapper().map(user, UserDto.class);
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
         List<OrderResponse> orders = new ArrayList<>();
         userDto.setOrders(orders);
@@ -50,7 +53,19 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Iterable<User> getUserByAll() {
+    public Iterable<UserEntity> getUserByAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByEmail(userName);
+        if (user == null)
+            throw new UsernameNotFoundException(userName);
+
+        return new User(user.getEmail(), user.getEncryptedPassword(),
+                true, true, true, true,
+                new ArrayList<>()) {
+        };
     }
 }
