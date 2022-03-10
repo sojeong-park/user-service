@@ -29,6 +29,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         //http 요청이 users로 들어오는 모든것들은 허용한다.
         //http.authorizeHttpRequests().antMatchers("/uesrs/**").permitAll();
 
+        //actuator 로 호출되는 모든 정보에 대해서는 인증이나 권한 없이 진행 가능
+        http.authorizeRequests().antMatchers("/actuator/**").permitAll();
+
         //지정된 IP만 요청 가능
         http.authorizeRequests().antMatchers("/**")
                 .hasIpAddress("192.168.219.102")
