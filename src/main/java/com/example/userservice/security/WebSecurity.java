@@ -28,17 +28,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
         //지정된 IP만 요청 가능
         http.authorizeRequests().antMatchers("/**")
-                .hasIpAddress("127.0.0.1")
+                .hasIpAddress("192.168.219.102")
                 .and()
-                .addFilter(getAuthenticationFileter());
+                .addFilter(getAuthenticationFilter());
 
         //h2-console 사용시 프레임뜨지 않는 오류 해결
         http.headers().frameOptions().disable();
     }
 
-    private AuthenticationFilter getAuthenticationFileter() throws Exception{
-        AuthenticationFilter filter = new AuthenticationFilter();
-        filter.setAuthenticationManager(authenticationManager());
+    private AuthenticationFilter getAuthenticationFilter() throws Exception{
+        AuthenticationFilter filter = new AuthenticationFilter(authenticationManager(),userService);
         return filter;
     }
 
