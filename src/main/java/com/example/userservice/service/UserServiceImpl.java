@@ -1,9 +1,12 @@
 package com.example.userservice.service;
 
+import com.example.userservice.client.OrderServiceClient;
 import com.example.userservice.domain.UserEntity;
 import com.example.userservice.domain.UserRepository;
 import com.example.userservice.dto.UserDto;
 import com.example.userservice.vo.OrderResponse;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,21 +25,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService{
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
     private Environment env;
     private RestTemplate restTemplate;
+    private OrderServiceClient orderServiceClient;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository
                            , BCryptPasswordEncoder passwordEncoder
                            , Environment env
-                           , RestTemplate restTemplate) {
+                           , RestTemplate restTemplate
+                           , OrderServiceClient orderServiceClient) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.env = env;
         this.restTemplate = restTemplate;
+        this.orderServiceClient = orderServiceClient;
     }
 
     @Override
@@ -58,11 +65,19 @@ public class UserServiceImpl implements UserService{
         UserEntity userEntity = userRepository.findByUserId(userId);
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
-        String orderUrl = String.format(env.getProperty("order_service.uri"), userId);
+        /* RestTemplate 적용*/
+        /*String orderUrl = String.format(env.getProperty("order_service.uri"), userId);
         ResponseEntity<List<OrderResponse>> orderResponses = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
                 new ParameterizedTypeReference<List<OrderResponse>>() {
                 });
-        List<OrderResponse> orders = orderResponses.getBody();
+        */
+        /*Feign 적용*/
+        List<OrderResponse> orders = null;
+        try {
+            orderServiceClient.getOrders(userId);
+        } catch (FeignException ex) {
+            log.error(ex.getMessage());
+        }
 
         userDto.setOrders(orders);
 
