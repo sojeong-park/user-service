@@ -33,7 +33,8 @@ public class UserController {
         return String.format("It's working in User service"
                 + ", port (local.server.port) =" + env.getProperty("local.server.port")
                 + ", token secret =" + env.getProperty("token.secret")
-                + ", token expiration time =" + env.getProperty("token.expiration_time"));
+                + ", token expiration time =" + env.getProperty("token.expiration_time")
+                + ", order-service uri = " + env.getProperty("order_service.uri"));
     }
 
     @GetMapping("/welcome")
