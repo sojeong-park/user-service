@@ -30,19 +30,16 @@ public class UserServiceImpl implements UserService{
     private UserRepository userRepository;
     private BCryptPasswordEncoder passwordEncoder;
     private Environment env;
-    private RestTemplate restTemplate;
     private OrderServiceClient orderServiceClient;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository
                            , BCryptPasswordEncoder passwordEncoder
                            , Environment env
-                           , RestTemplate restTemplate
                            , OrderServiceClient orderServiceClient) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.env = env;
-        this.restTemplate = restTemplate;
         this.orderServiceClient = orderServiceClient;
     }
 
@@ -72,12 +69,16 @@ public class UserServiceImpl implements UserService{
                 });
         */
         /*Feign 적용*/
+        /*
         List<OrderResponse> orders = null;
         try {
             orderServiceClient.getOrders(userId);
         } catch (FeignException ex) {
             log.error(ex.getMessage());
-        }
+        }*/
+
+        /*FeignerrorDecoder 활용한 에러 핸들링*/
+        List<OrderResponse> orders = orderServiceClient.getOrders(userId);
 
         userDto.setOrders(orders);
 
